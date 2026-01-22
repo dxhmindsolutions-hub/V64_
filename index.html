@@ -146,24 +146,32 @@ main{
 }
 
 /* ===== TICKET ===== */
-#ticket-panel{
-  position:fixed;
-  bottom:20px;
-  left:12px;
-  right:12px;
-  background:#fff;
-  border-radius:14px;
-  padding:12px
+#ticket-panel {
+  position: fixed;
+  bottom: 20px;
+  left: 12px;
+  right: 12px;
+  background: #fff;
+  border-radius: 14px;
+  padding: 16px 12px 24px 12px; /* más espacio arriba y abajo */
 }
-#ticket-panel ul{
-  list-style:none;
-  padding:0;
-  margin:0
+
+#ticket-panel strong {
+  display: block;
+  margin-bottom: 12px; /* separa el título de la lista */
+  font-size: 18px;      /* opcional: hacer el título un poco más grande */
 }
-#ticket-panel li{
-  display:flex;
-  justify-content:space-between;
-  margin-bottom:4px
+
+#ticket-panel ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+#ticket-panel li {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px; /* un poco más de espacio entre artículos */
+
 }
 .ticket-actions{
   display:flex;
