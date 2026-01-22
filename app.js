@@ -43,13 +43,25 @@ function toggleDrawer(){
   drawer.classList.toggle("open");
 }
 
-function renderDrawer(){
-  drawer.innerHTML = categories.map(c => `
-    <button class="${c === activeCat ? "active" : ""}"
-      onclick="activeCat='${c}';toggleDrawer();render()">
-      ${c}
-    </button>
-  `).join("");
+function renderDrawer() {
+  drawer.innerHTML = '';
+
+  categories.forEach(cat => {
+    const btn = document.createElement('button');
+    btn.textContent = cat;
+
+    // Aplicar clase active si corresponde
+    if(cat === activeCat) btn.classList.add('active');
+
+    // Evento click
+    btn.addEventListener('click', () => {
+      activeCat = cat;
+      toggleDrawer();
+      render();
+    });
+
+    drawer.appendChild(btn);
+  });
 }
 
 /* ===== RENDER PRINCIPAL ===== */
