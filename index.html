@@ -70,7 +70,7 @@ h1{
   border-radius:12px;
   background:#fff;
   font-weight:600;
-  font-size:14px;   /* 👈 MÁS GRANDE */
+  font-size:14px
 }
 
 /* ===== BOTÓN AÑADIR ARTÍCULO ===== */
@@ -252,6 +252,14 @@ main{
     margin-top:20px
   }
 }
+
+/* ===== NORMALIZAR BOTONES (Safari iOS) ===== */
+button{
+  appearance:none;
+  -webkit-appearance:none;
+  background-color:#fff;
+  color:#000;
+}
 </style>
 </head>
 
@@ -280,7 +288,7 @@ main{
   <div class="ticket-actions">
     <button onclick="printTicket()">🖨️ Imprimir</button>
     <button onclick="sendWhatsApp()">📲 WhatsApp</button>
-   <button onclick="askResetTicket()">🔄 Nuevo</button>
+    <button onclick="askResetTicket()">🔄 Nuevo</button>
   </div>
 </div>
 
