@@ -242,32 +242,26 @@ function closeConfirm(){
 /* ===== IMPRIMIR TICKET ===== */
 function printTicket(){
 
-  let html = `
-    <div id="print-ticket">
-      <h2 style="text-align:center">PEDIDO</h2>
-      <p style="text-align:center">${new Date().toLocaleString()}</p>
-      <hr>
-  `;
+  document.getElementById("ticket-fecha").textContent =
+    new Date().toLocaleString();
+
+  const itemsDiv = document.getElementById("ticket-items");
+  itemsDiv.innerHTML = "";
 
   cart.forEach(c => {
-    html += `
-      <div style="display:flex;justify-content:space-between">
+    itemsDiv.innerHTML += `
+      <div class="ticket-line">
         <span>${c.name}</span>
         <span>${c.qty} ${c.unit}</span>
       </div>
     `;
   });
 
-  html += `
-      <hr>
-      <p style="text-align:center">Gracias por su pedido</p>
-    </div>
-  `;
+  document.getElementById("ticket-total").textContent = cart.length;
 
-  document.body.insertAdjacentHTML("beforeend", html);
   window.print();
-  document.getElementById("print-ticket").remove();
 }
+
 
 /* ===== WHATSAPP ===== */
 function buildWhatsAppText(){
