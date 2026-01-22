@@ -51,30 +51,44 @@ h1{
 }
 
 /* ===== DRAWER ===== */
-#drawer{
-  position:fixed;
-  top:0;bottom:0;left:0;
-  width:260px;
-  background:#fff;
-  transform:translateX(-100%);
-  transition:.3s;
-  padding:16px;
-  z-index:20
+#drawer {
+  position: fixed;
+  top: 0; bottom: 0; left: 0;
+  width: 260px;
+  background: #fff;
+  transform: translateX(-100%);
+  transition: .3s;
+  padding: 16px;
+  z-index: 20;
 }
-#drawer.open{transform:translateX(0)}
-#drawer button{
-  width:100%;
-  padding:13px;
-  margin-bottom:10px;
-  border:1px solid #000;
-  border-radius:12px;
-  background:#fff;
-  font-weight:600;
-  font-size:14px;
+
+#drawer.open {
+  transform: translateX(0);
+}
+
+#drawer button {
+  width: 100%;
+  padding: 13px;
+  margin-bottom: 10px;
+  border: 1px solid #000;
+  border-radius: 12px;
+  background: #fff;
+  font-weight: 600;
+  font-size: 14px;
   text-align: left;
-
 }
 
+/* Botón activo en el drawer */
+#drawer button.active {
+  background: #000; /* fondo negro */
+  color: #fff;      /* texto blanco */
+}
+
+/* Opcional: efecto al pasar el mouse */
+#drawer button:hover {
+  background: #333;
+  color: #fff;
+}
 /* ===== BOTÓN AÑADIR ARTÍCULO ===== */
 #addItemBtn{
   display:none;
