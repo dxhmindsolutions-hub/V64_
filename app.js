@@ -38,6 +38,41 @@ let cart  = JSON.parse(localStorage.cart  || "[]");
 let deleteIndex = null;
 let deleteType  = null;
 
+/* ===== ORDEN INTELIGENTE ===== */
+function parseQty(name){
+  const m = name.match(/([\d,.]+)/);
+  return m ? parseFloat(m[1].replace(',', '.')) : null;
+}
+
+function baseName(name){
+  return name.replace(/[\d.,]+\s*(cl|l|litros?|kg|g)?/i, '').trim();
+}
+
+function sortItems(){
+  items.sort((a, b) => {
+
+    if (a.cat !== b.cat) {
+      return a.cat.localeCompare(b.cat, 'es', { sensitivity: 'base' });
+    }
+
+    const baseA = baseName(a.name);
+    const baseB = baseName(b.name);
+
+    if (baseA !== baseB) {
+      return baseA.localeCompare(baseB, 'es', { sensitivity: 'base' });
+    }
+
+    const qA = parseQty(a.name);
+    const qB = parseQty(b.name);
+
+    if (qA !== null && qB !== null) return qA - qB;
+    if (qA !== null) return -1;
+    if (qB !== null) return 1;
+
+    return a.name.localeCompare(b.name, 'es', { sensitivity: 'base' });
+  });
+}
+
 /* ===== DRAWER ===== */
 function toggleDrawer(){
   drawer.classList.toggle("open");
@@ -49,16 +84,13 @@ function renderDrawer() {
   categories.forEach(cat => {
     const btn = document.createElement('button');
     btn.textContent = cat;
-
-    // Aplicar clase active si corresponde
     if(cat === activeCat) btn.classList.add('active');
 
-    // Evento click
-    btn.addEventListener('click', () => {
+    btn.onclick = () => {
       activeCat = cat;
       toggleDrawer();
       render();
-    });
+    };
 
     drawer.appendChild(btn);
   });
@@ -67,13 +99,10 @@ function renderDrawer() {
 /* ===== RENDER PRINCIPAL ===== */
 function render(){
 
-  if(editMode){
-    addItemBtn.style.display = "block";
-    editBtn.textContent = "↩️ Volver";
-  }else{
-    addItemBtn.style.display = "none";
-    editBtn.textContent = "✏️ Editar";
-  }
+  sortItems();
+
+  addItemBtn.style.display = editMode ? "block" : "none";
+  editBtn.textContent = editMode ? "↩️ Volver" : "✏️ Editar";
 
   renderDrawer();
 
@@ -139,7 +168,7 @@ function showAddItem(){
   };
 }
 
-/* ===== MODAL CANTIDAD / UNIDAD ===== */
+/* ===== MODAL CANTIDAD ===== */
 function showQtyModal(name){
   let qty = 1;
   let unit = "UNIDAD";
@@ -222,111 +251,26 @@ function askDeleteTicket(i){
   confirmModal.style.display = "flex";
 }
 
-/* ===== NUEVO TICKET (CONFIRMADO) ===== */
 function askResetTicket(){
   deleteType = "reset";
   confirmText.textContent = "¿Eliminar ticket de pedido?";
   confirmModal.style.display = "flex";
 }
 
-/* ===== CONFIRMAR ===== */
 function confirmDelete(){
-
-  if(deleteType === "item"){
-    items.splice(deleteIndex, 1);
-  }
-
-  if(deleteType === "ticket"){
-    cart.splice(deleteIndex, 1);
-  }
-
-  if(deleteType === "reset"){
-    cart = [];
-  }
-
-  closeConfirm();
-  render();
-}
-
-function closeConfirm(){
+  if(deleteType === "item") items.splice(deleteIndex, 1);
+  if(deleteType === "ticket") cart.splice(deleteIndex, 1);
+  if(deleteType === "reset") cart = [];
   confirmModal.style.display = "none";
-}
-/* ===== IMPRIMIR TICKET ===== */
-function printTicket(){
-
-  document.getElementById("ticket-fecha").textContent =
-    new Date().toLocaleString();
-
-  const itemsDiv = document.getElementById("ticket-items");
-  itemsDiv.innerHTML = "";
-
-  cart.forEach(c => {
-    itemsDiv.innerHTML += `
-      <div class="ticket-line">
-        <span>${c.name}</span>
-        <span>${c.qty} ${c.unit}</span>
-      </div>
-    `;
-  });
-
-  document.getElementById("ticket-total").textContent = cart.length;
-
-  window.print();
-}
-
-
-/* ===== WHATSAPP ===== */
-function buildWhatsAppText(){
-  let txt = "🧾 *PEDIDO*\n\n";
-  categories.forEach(cat => {
-    const lines = cart.filter(c => {
-      const it = items.find(i => i.name === c.name);
-      return it && it.cat === cat;
-    });
-    if(lines.length){
-      txt += cat.toUpperCase() + "\n";
-      lines.forEach(l => {
-        txt += `- ${l.name}: ${l.qty} ${l.unit}\n`;
-      });
-      txt += "\n";
-    }
-  });
-  return txt.trim();
-}
-
-function previewWhatsApp(){
-  const m = document.createElement("div");
-  m.className = "modal";
-  m.style.display = "flex";
-  m.innerHTML = `
-    <div class="box">
-      <h3>Vista previa WhatsApp</h3>
-      <textarea style="width:100%;height:200px">${buildWhatsAppText()}</textarea>
-      <div>
-        <button id="cancel">Cancelar</button>
-        <button id="send">Enviar</button>
-      </div>
-    </div>
-  `;
-  document.body.appendChild(m);
-
-  m.querySelector("#cancel").onclick = () => m.remove();
-  m.querySelector("#send").onclick = () => {
-    const txt = m.querySelector("textarea").value;
-    window.open("https://wa.me/?text=" + encodeURIComponent(txt));
-    m.remove();
-  };
-}
-
-function sendWhatsApp(){
-  previewWhatsApp();
+  render();
 }
 
 /* ===== DATOS INICIALES ===== */
 if(items.length === 0){
   items = [
-    { name: "Coca Cola", cat: "Aguas y refrescos" },
-    { name: "Manzana", cat: "Frutas y verduras" }
+    { name: "Agua 50cl", cat: "Aguas y refrescos" },
+    { name: "Agua 1,25 litros", cat: "Aguas y refrescos" },
+    { name: "Coca Cola", cat: "Aguas y refrescos" }
   ];
 }
 
